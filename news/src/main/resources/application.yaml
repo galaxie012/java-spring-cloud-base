@@ -1,0 +1,43 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+
+feign:
+  hystrix:
+    enabled: true
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:news_service_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS news_service_db
+    platform: h2
+    newsname: sa
+    password:
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        show_sql: true
+        use_sql_comments: true
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /console
+      settings:
+        trace: false
+        web-allow-others: true
+  flyway:
+    locations: "classpath:/db/migration"
+
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /swagger

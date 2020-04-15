@@ -1,0 +1,56 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+jwt:
+  key: "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCblSRvnbwpHplZRwqgSAH98gj/I9PF0HMDM7KSlJ4fnjxJufApZgDoMm8HReM+7WAcYJrDCuG/dUvNT4jbid5jIX2GW/1yPy8Pic3+PjKHsuQHSF7bsT88mHsjwq6kKQzeuwZfBk2vilBFK0k2q8Lxt0a5ksOYHDS/dNmC4wrJ+QIDAQAB"
+  issuer: "https://sandrino.auth0.com/"
+  audience: "aud"
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
+    hou.tidaa: DEBUG
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+          lower-case-service-id: true # 在eureka中，服务是以大写的形式注册的，可以转化成小写
+      filter:
+        remove-hop-by-hop:
+          headers:
+            - authorization
+      routes:
+        - id: login-service   # 服务唯一ID标识
+          uri: lb://user      # 注册中心的服务id
+          predicates:
+            - Path=/auth/**
+
+        - id: user-service
+          uri: lb://user
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - JWT=Forward-Auth,Reserved
+
+        - id: news-service
+          uri: lb://news
+          predicates:
+            - Path=/api/news/**
+          filters:
+            - JWT=Forward-Auth,Reserved
+
+        - id: test-filters
+          uri: http://httpbin.org
+          predicates:
+            - Path=/test/**
+          filters:
+            - StripPrefix=1
+            - Logging=httpbin,true,true
+            - AddRequestHeader=X-Request-Foo, Bar
