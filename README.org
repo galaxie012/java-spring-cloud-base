@@ -1,0 +1,92 @@
+* Dev
+#+begin_src bash
+git clone git@github.com:tidaa/java-spring-cloud-base.git
+cd java-spring-cloud-base
+./gradlew idea openIdea
+
+# 启动服务注册服务器
+cd eureka
+../gradlew clean bootRun
+
+# 启动配置服务器
+cd config
+../gradlew clean bootRun
+
+# 启动用户微服务
+cd user
+../gradlew clean bootRun
+
+# 启动新闻微服务
+cd news
+../gradlew clean bootRun
+
+# 启动网关服务器
+cd gateway
+../gradlew clean bootRun
+#+end_src
+
+* Usage
+** 网关地址
+http://localhost:8766/
+
+网关转发规则为：
+| http://localhost:8766/api/users/** | http://localhost:8081/api/users/** |
+| http://localhost:8766/api/news/**  | http://localhost:8082/api/news/**  |
+
+** Eureka 地址
+http://localhost:8761/
+
+** 查看 user, news api
+http://localhost:8081/swagger-ui.html
+http://localhost:8082/swagger-ui.html
+
+** 查看 user, news 的数据库
+- http://localhost:8081/console
+
+  JDBC URL:
+  jdbc:h2:mem:user_service_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS user_service_db
+
+- http://localhost:8082/console
+
+  JDBC URL:
+  jdbc:h2:mem:news_service_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE SCHEMA IF NOT EXISTS news_service_db
+
+** 获取用户名
+#+begin_src
+curl -i http://localhost:8081/api/users/5ba27e5a-5f35-4945-b307-e73d4ec17b01/name
+curl -i http://localhost:8766/api/users/5ba27e5a-5f35-4945-b307-e73d4ec17b01/name
+#+end_src
+
+** 获取用户详情
+#+begin_src
+curl -i http://localhost:8081/api/users/5ba27e5a-5f35-4945-b307-e73d4ec17b01
+#+end_src
+
+** 创建用户
+#+begin_src
+curl -i -H "Content-Type: application/json" -X POST -d '{"name":"admin","password":"admin"}' http://localhost:8081/api/users/
+curl -i -H "Content-Type: application/json" -X POST -d '{"name":"user","password":"user"}' http://localhost:8081/api/users/
+curl -i -H "Content-Type: application/json" -X POST -d '{"name":"tidaa","password":"tidaa"}' http://localhost:8081/api/users/
+#+end_src
+
+** 登录
+#+begin_src
+curl -i -H "Content-Type: application/json" -X POST -d '{"name":"admin","password":"admin"}' http://localhost:8081/auth/login
+curl -i -H "Content-Type: application/json" -X POST -d '{"name":"admin","password":"admin"}' http://localhost:8766/auth/login
+#+end_src
+
+** 创建新闻
+#+begin_src
+curl -H "Content-Type: application/json" -X POST -d '{"authorId":"5ba27e5a-5f35-4945-b307-e73d4ec17b01", "title":"MAGA","body":"-"}' http://localhost:8082/api/news/
+#+end_src
+
+** 获取新闻详情
+#+begin_src
+curl -i http://localhost:8082/api/news/4ba27e5a-5f35-4945-b307-e73d4ec17b01
+
+# 通过网关 + JWT Token 访问
+curl -i -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0aWRhYSJ9.EcYJZKHiCAshlRqJKIZtpNrkBIF4Nj0sc7-lKtHUna19AtCGsPrxw9wcppduwQ3D9D_y9uPiuFOQUbKRd7oqZ-t3pN6IhOey9xbKoYNWKnePWVTGz21dWjN3_7AcDkjV1shZ0NQylL2pLQbu0PfZTcVOFK0IaSAq2RhNY36ZCMc" http://localhost:8766/api/news/4ba27e5a-5f35-4945-b307-e73d4ec17b01
+#+end_src
+
+** devops 设计文档
+查看项目根路径 [[DevOps.md]] 文件
