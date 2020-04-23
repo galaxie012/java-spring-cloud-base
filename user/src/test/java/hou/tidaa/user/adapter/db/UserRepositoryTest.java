@@ -17,7 +17,7 @@ class UserRepositoryTest {
     @Autowired
     private UserFactory userFactory;
 
-    @Test
+    //@Test
     public void users_crud_works() {
         User guest = userFactory.register("guest", "guest");
         String uid = guest.getId();

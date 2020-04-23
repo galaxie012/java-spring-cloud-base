@@ -1,5 +1,6 @@
 rootProject.name = 'springcloud'
 
+include 'core'
 include 'eureka'
 include 'config'
 include 'gateway'

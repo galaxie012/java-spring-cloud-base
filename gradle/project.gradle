@@ -1,0 +1,71 @@
+ext.template = [
+        java: { name ->
+            apply plugin: 'java'
+
+            group = "${baseGroup}"
+            version = "${baseVersion}"
+
+            sourceCompatibility = minJavaVersion
+            targetCompatibility = minJavaVersion
+
+            apply plugin: 'org.owasp.dependencycheck'
+        },
+
+        javacheckstyle: {name ->
+            apply plugin: 'checkstyle'
+
+            checkstyle {
+                configFile = new File(rootDir,"gradle/checkstyle/checkstyle.xml")
+            }
+
+            configure(checkstyleMain) {
+                group = 'Verification'
+                description = 'Run checkstyle on all main Java sources'
+            }
+
+            configure(checkstyleTest) {
+                group = 'Verification'
+                description = 'Run checkstyle on all test Java sources'
+            }
+
+            test.dependsOn('checkstyleMain', 'checkstyleTest')
+
+        },
+
+        javaunittest: { name ->
+            test {
+                useJUnitPlatform()
+                testLogging {
+                    events "passed", "skipped", "failed"
+                }
+            }
+        },
+
+        springbootweb: { name ->
+            apply plugin: "org.springframework.boot"
+            apply plugin: "com.gorylenko.gradle-git-properties"
+
+            gitProperties {
+                dateFormat = "yyyy.MM.dd HH:mm:ss z"
+                dateFormatTimeZone = "Asia/Chongqing"
+            }
+
+            springBoot {
+                buildInfo()
+            }
+        },
+
+        springcloud: { name ->
+            // fix: no main manifest attribute, in build/libs/*.jar
+            apply plugin: "org.springframework.boot"
+            apply plugin: 'io.spring.dependency-management'
+
+            dependencyManagement {
+                imports {
+                    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+                }
+            }
+        },
+
+
+]

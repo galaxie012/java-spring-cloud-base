@@ -1,0 +1,12 @@
+dependencies {
+    implementation libs.Auth0Jwt
+    implementation libs.Auth0Jwks
+    implementation libs.CommonsCodec
+
+    compileOnly libs.Lombok
+    annotationProcessor libs.Lombok
+
+    testImplementation libs.JUnit5
+}
+
+ext.template.javaunittest()

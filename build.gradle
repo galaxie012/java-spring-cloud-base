@@ -2,29 +2,43 @@ apply plugin: 'idea'
 
 buildscript {
     repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        mavenCentral()
+        apply from: "$rootDir/gradle/dependencies.gradle"
         maven {
             url "https://plugins.gradle.org/m2/"
         }
     }
+
+    dependencies {
+        classpath libs.GradlePluginGit
+        classpath libs.GradlePluginFlyway
+        classpath libs.GradlePluginSpringBoot
+        classpath libs.GradlePluginDependencyCheck
+    }
 }
 
-ext {
-    minJavaVersion = "8"
-    gradleVersion = "6.3"
-}
 
 subprojects {
-    apply plugin: 'java'
+    apply from: file("$rootDir/gradle/project.gradle")
 
-    repositories {
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        mavenCentral()
+    switch(name) {
+        case 'core':
+            template.java(name)
+            break;
+        case ['config', 'eureka', 'gateway']:
+            template.java(name)
+            template.springcloud(name)
+            break;
+        case ['user', 'news']:
+            template.java(name)
+            template.springbootweb(name)
+            template.springcloud(name)
+            break;
+        default:
+            break;
     }
 
-    sourceCompatibility = minJavaVersion
-    targetCompatibility = minJavaVersion
+    repositories {
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        mavenCentral()
+    }
 }
-
-apply from: file('wrapper.gradle')

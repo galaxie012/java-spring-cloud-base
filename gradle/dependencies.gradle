@@ -1,0 +1,47 @@
+ext{
+    baseGroup = 'hou.tidaa'
+    baseVersion = '0.0.1'
+    minJavaVersion = '8'
+    gradleVersion = '6.3'
+
+    springBootVersion = '2.2.6.RELEASE'
+    springCloudVersion = 'Hoxton.SR3'
+
+    libs = [:]
+    commitId = project.hasProperty('commitId') ? commitId : null
+}
+
+libs +=[
+        ScalaLibrary            : 'org.scala-lang:scala-library:2.13.1',
+        ScalaLogging            : 'com.typesafe.scala-logging:scala-logging_2.13:3.9.2',
+        ScalaTest               : 'org.scalatest:scalatest_2.13:3.0.8',
+
+        JUnit4                  : 'junit:junit:4.13',
+        JUnit5                  : 'org.junit.jupiter:junit-jupiter:5.5.2',
+        JUnit5Mockito           : 'org.mockito:mockito-junit-jupiter:3.1.0',
+
+        // https://mvnrepository.com/artifact/com.auth0/java-jwt
+        Auth0Jwks               : 'com.auth0:jwks-rsa:0.11.0',
+        // https://mvnrepository.com/artifact/com.auth0/jwks-rsa
+        Auth0Jwt                : 'com.auth0:java-jwt:3.10.2',
+        ArchUnit                : 'com.tngtech.archunit:archunit-junit5:0.13.1',
+        // https://mvnrepository.com/artifact/commons-codec/commons-codec
+        CommonsCodec            : 'commons-codec:commons-codec:1.9',
+        Lombok                  : 'org.projectlombok:lombok:1.18.8',
+        ModelMapper             : 'org.modelmapper:modelmapper:2.3.0',
+        NScalaTime              : 'com.github.nscala-time:nscala-time_2.13:2.22.0',
+        Slf4jApi                : 'org.slf4j:slf4j-api:1.7.30',
+        // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
+        // dependency-check:
+        // org.slf4j:slf4j-log4j12:1.7.30 -> log4j-1.2.17.jar (https://ossindex.sonatype.org/component/pkg:maven/log4j/log4j@1.2.17)
+        // https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&search_type=all&cpe_vendor=cpe%3A%2F%3Aapache&cpe_product=cpe%3A%2F%3Aapache%3Alog4j&cpe_version=cpe%3A%2F%3Aapache%3Alog4j%3A1.2.17
+        Slf4jlog4j              : 'org.slf4j:slf4j-log4j12:1.7.30',
+        Swagger                 : 'io.springfox:springfox-swagger2:2.9.2',
+        SwaggerUI               : 'io.springfox:springfox-swagger-ui:2.9.2',
+
+        GradlePluginGit         : "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:2.2.2",
+        GradlePluginFlyway      : "gradle.plugin.org.flywaydb:gradle-plugin-publishing:6.3.3",
+        GradlePluginSpringBoot  : "org.springframework.boot:spring-boot-gradle-plugin:2.2.6.RELEASE",
+        // https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/index.html
+        GradlePluginDependencyCheck : 'org.owasp:dependency-check-gradle:5.3.2'
+]

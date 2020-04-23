@@ -8,10 +8,10 @@ spring:
         git:
           uri: https://github.com/tidaa/spring-configs.git
           skipSslValidation: true
-          search-paths: 'config/{profile}/common, config/{profile}/{application}'
+          search-paths: '{profile}/common, {profile}/{application}'
 eureka:
   instance:
     prefer-ip-address: true
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka:8761/eureka/
