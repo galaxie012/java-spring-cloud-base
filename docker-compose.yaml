@@ -1,0 +1,34 @@
+version: '3.4'
+
+services:
+  eureka:
+    image: hyyall1
+    command: ["eureka.jar"]
+    ports:
+      - 8761:8761
+  config:
+    image: entryimage:v1
+    command: ["-h","http://eureka:8761/actuator/health","config.jar"]
+  gateway:
+    image: entryimage:v1
+    command: ["-h","http://config:8888/actuator/health","gateway.jar"]
+    ports:
+      - 8080:8080
+  user:
+    image: entryimage:v1
+    command: ["-h","http://config:8888/actuator/health","user.jar"]
+    healthcheck:
+      test: "curl -f http://user:8888/actuator/health || exit 1"
+      interval: 30s
+      timeout: 30s
+      retries: 6
+  news:
+    image: entryimage:v1
+    command: ["-h","http://config:8888/actuator/health","news.jar"]
+    healthcheck:
+      #test: ["CMD", "curl", "-f", "http://news:8082/actuator/health"]
+      test: "curl -f http://news:8082/actuator/health || exit 1"
+      interval: 30s
+      timeout: 30s
+      retries: 6
+

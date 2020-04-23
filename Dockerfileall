@@ -1,0 +1,14 @@
+FROM openjdk:8-jdk
+
+ENV VER 0.0.1
+
+COPY ./config/build/libs/config-${VER}*.jar   config.jar
+COPY ./eureka/build/libs/eureka-${VER}*.jar   eureka.jar
+COPY ./gateway/build/libs/gateway-${VER}*.jar gateway.jar
+COPY ./user/build/libs/user-${VER}*.jar       user.jar
+COPY ./news/build/libs/news-${VER}*.jar       news.jar
+COPY ./entrypoint.sh       entrypoint.sh
+RUN chmod 777 /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD [ "bash" ]
