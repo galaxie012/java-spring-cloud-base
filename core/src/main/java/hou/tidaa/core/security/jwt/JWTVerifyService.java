@@ -8,6 +8,8 @@ import hou.tidaa.core.security.token.IdentityDto;
 import hou.tidaa.core.security.token.Token;
 import hou.tidaa.core.security.token.TokenVerifyService;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
 
 public class JWTVerifyService implements TokenVerifyService<String> {
@@ -16,6 +18,12 @@ public class JWTVerifyService implements TokenVerifyService<String> {
 
     public JWTVerifyService(Algorithm algorithm) {
         this.verifier = JWT.require(algorithm).build();
+    }
+
+    public static JWTVerifyService fromPubliceKey(String base64EncodedPublicKey)
+        throws InvalidKeySpecException, NoSuchAlgorithmException{
+        Algorithm algorithm = JWTAlgorithmFactory.getJWTVerifyAlgorithm(base64EncodedPublicKey);
+        return new JWTVerifyService(algorithm);
     }
 
     @Override

@@ -1,13 +1,13 @@
 package hou.tidaa.gateway.filters.jwt;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
+import hou.tidaa.core.security.jwt.JWTVerifyService;
+import hou.tidaa.core.security.token.IdentityDto;
+import hou.tidaa.core.security.token.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractNameValueGatewayFilterFactory;
+import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -17,39 +17,36 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+import static hou.tidaa.gateway.filters.jwt.JWTException.*;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @Slf4j
 @Component
 public class JWTGatewayFilterFactory extends AbstractNameValueGatewayFilterFactory {
-    private static final String JWT_AUTH_HEADER = "Authorization";
-    private static final String JWT_SUB_HEADER = "X-jwt-sub";
-    private static final String WWW_AUTH_HEADER = "WWW-Authenticate";
+    public static final String JWT_PREFIX = "Bearer";
+    public static final String ID_HEADER = "X-identity";
 
-    private final JWTVerifier jwtVerifier;
+    private final JWTVerifyService verifyService;
+
 
     @Autowired
-    public JWTGatewayFilterFactory(@Qualifier("jwt") JWTVerifier jwtVerifier) {
-        this.jwtVerifier = jwtVerifier;
+    public JWTGatewayFilterFactory(JWTVerifyService verifyService) {
+        this.verifyService = verifyService;
     }
 
     @Override
     public GatewayFilter apply(NameValueConfig config) {
         return (exchange, chain) -> {
-            log.debug("enter JWTFilter");
-            try {
-                NameValueConfig c2  = config;
-                log.debug(config.toString());
-                String token = this.extractJWTToken(exchange.getRequest());
-                DecodedJWT decodedJWT = this.jwtVerifier.verify(token);
+            try{
+                Token<String> token = this.extractJWTToken(exchange.getRequest());
+                IdentityDto identityDto = this.verifyService.verify(token)
+                        .orElseThrow(() -> new JWTException(MALFORMED_AUTHORIZATION_CONTENT));
 
                 ServerHttpRequest request = exchange.getRequest().mutate().
-                        header(JWT_SUB_HEADER, decodedJWT.getSubject()).
+                        header(ID_HEADER, identityDto.getUid()).
                         build();
-
                 return chain.filter(exchange.mutate().request(request).build());
-
-            } catch (JWTVerificationException ex) {
-
-                log.error(ex.toString());
+            }catch (JWTException ex) {
                 return this.onError(exchange, ex.getMessage());
             }
         };
@@ -58,33 +55,33 @@ public class JWTGatewayFilterFactory extends AbstractNameValueGatewayFilterFacto
     private Mono<Void> onError(ServerWebExchange exchange, String err) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        response.getHeaders().add(WWW_AUTH_HEADER, this.formatErrorMsg(err));
+        response.getHeaders().add(AUTHORIZATION, this.formatErrorMsg(err));
 
         return response.setComplete();
     }
 
-    private String extractJWTToken(ServerHttpRequest request) {
-        if (!request.getHeaders().containsKey(JWT_AUTH_HEADER)) {
-            throw new JWTTokenExtractException("Authorization header is missing");
+    public Token<String> extractJWTToken(HttpMessage request) throws JWTException {
+        if (!request.getHeaders().containsKey(AUTHORIZATION)) {
+            throw new JWTException(AUTHORIZATION_HEADER_IS_MISSING);
         }
 
-        List<String> headers = request.getHeaders().get(JWT_AUTH_HEADER);
+        List<String> headers = request.getHeaders().get(AUTHORIZATION);
         if (headers.isEmpty()) {
-            throw new JWTTokenExtractException("Authorization header is empty");
+            throw new JWTException(AUTHORIZATION_CONTENT_IS_MISSING);
         }
 
         String credential = headers.get(0).trim();
         String[] components = credential.split("\\s");
 
         if (components.length != 2) {
-            throw new JWTTokenExtractException("Malformat Authorization content");
+            throw new JWTException(MALFORMED_AUTHORIZATION_CONTENT);
         }
 
-        if (!components[0].equals("Bearer")) {
-            throw new JWTTokenExtractException("Bearer is needed");
+        if (!components[0].equals(JWT_PREFIX)) {
+            throw new JWTException(BEARER_IS_NEEDED);
         }
 
-        return components[1].trim();
+        return Token.jwt(components[1].trim());
     }
 
     private String formatErrorMsg(String msg) {
