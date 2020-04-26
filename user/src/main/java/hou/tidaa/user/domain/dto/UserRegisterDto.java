@@ -2,7 +2,7 @@ package hou.tidaa.user.domain.dto;
 
 import javax.validation.constraints.NotNull;
 
-public class UserRegisteringDto {
+public class UserRegisterDto {
     @NotNull
     public String name;
     @NotNull

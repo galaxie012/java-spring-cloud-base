@@ -8,10 +8,10 @@ import java.security.spec.InvalidKeySpecException;
 
 public class JWTAlgorithmFactory {
 
-//    public static Algorithm getJWTSignAlgorithm(String base64EncodePrivateKey)
-//            throws InvalidKeySpecException, NoSuchAlgorithmException {
-//        return Algorithm.RSA256(null, RSAKeyFactory.decodePrivateKey(base64EncodePrivateKey));
-//    };
+    public static Algorithm getJWTSignAlgorithm(String base64EncodePrivateKey)
+            throws InvalidKeySpecException, NoSuchAlgorithmException {
+        return Algorithm.RSA256(null, RSAKeyFactory.decodePrivateKey(base64EncodePrivateKey));
+    };
 
     public static Algorithm getJWTVerifyAlgorithm(String base64EncodedPublicKey)
         throws InvalidKeySpecException, NoSuchAlgorithmException {

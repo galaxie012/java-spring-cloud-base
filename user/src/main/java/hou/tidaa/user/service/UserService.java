@@ -1,36 +1,47 @@
 package hou.tidaa.user.service;
 
-import hou.tidaa.user.adapter.db.UserRepository;
-import hou.tidaa.user.domain.dto.UserRegisteringDto;
+import hou.tidaa.core.security.token.IdentityDto;
+import hou.tidaa.user.domain.dto.UserRegisterDto;
+import hou.tidaa.user.domain.dto.UsernamePasswordDto;
+import hou.tidaa.user.domain.exception.RegistrationException;
+import hou.tidaa.user.domain.factory.UserFactory;
 import hou.tidaa.user.domain.model.User;
-import hou.tidaa.user.domain.model.UserFactory;
+import hou.tidaa.user.domain.ports.UserAuthentication;
+import hou.tidaa.user.domain.ports.UserManagement;
+import hou.tidaa.user.domain.ports.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+
 @Service
-public class UserService {
+public class UserService implements UserManagement, UserAuthentication {
     private final UserRepository userRepository;
-    private final UserFactory userFactory;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserFactory userFactory) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userFactory = userFactory;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public User findById(String uid) throws UserNotFoundException {
-        return userRepository.findById(uid)
-                .orElseThrow(() -> new UserNotFoundException("No user found with uid:" + uid));
+
+    @Override
+    public Optional<IdentityDto> authentication(UsernamePasswordDto dto) {
+        return Optional.empty();
     }
 
-    public User saveUser(UserRegisteringDto dto) {
-        Optional<User> optionalUser = userRepository.findByName(dto.name);
-        if (optionalUser.isPresent()) {
-            throw new UsernameAlreadyExistException("User name already exist! Please choose another user name.");
-        }
-        final User user = userFactory.register(dto.name, dto.password);
+    @Override
+    public User register(UserRegisterDto dto) {
+        userRepository.findByName(dto.name)
+                .ifPresent(user -> {
+                    throw new RegistrationException("User name already exist! Please choose another user name.");
+                });
+
+        final String password = passwordEncoder.encode(dto.password);
+        final User user = UserFactory.register(dto.name, password);
         userRepository.save(user);
         return user;
     }

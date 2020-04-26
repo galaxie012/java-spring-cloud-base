@@ -1,9 +1,10 @@
 package hou.tidaa.user.adapter.rest;
 
-import hou.tidaa.user.service.UserNotFoundException;
-import hou.tidaa.user.domain.dto.UserRegisteringDto;
+import hou.tidaa.user.domain.dto.UserRegisterDto;
+import hou.tidaa.user.domain.ports.UserManagement;
+import hou.tidaa.user.domain.ports.UserRepository;
 import hou.tidaa.user.domain.model.User;
-import hou.tidaa.user.service.UserService;
+import org.hibernate.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,26 +16,29 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequestMapping(value = "/api/users", produces = APPLICATION_JSON_VALUE)
 public class UserResource {
-    private final UserService userService;
+    private final UserManagement userManagement;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserResource(UserService userService) {
-        this.userService = userService;
+    public UserResource(final UserManagement userManagement, final UserRepository userRepository) {
+        this.userManagement = userManagement;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/{id}")
-    public User get(@PathVariable String id) throws UserNotFoundException {
-        return userService.findById(id);
+    public User findUserById(@PathVariable final String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new QueryException("No user found with uid:" + id));
     }
 
     @GetMapping("/{id}/name")
-    public String getName(@PathVariable String id) throws UserNotFoundException {
-        return userService.findById(id).getName();
+    public String findUsernameById(@PathVariable final String id) {
+        return findUserById(id).getName();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User create(@Valid @RequestBody UserRegisteringDto dto) {
-        return userService.saveUser(dto);
+    public User create(@Valid @RequestBody final UserRegisterDto dto) {
+        return userManagement.register(dto);
     }
 }

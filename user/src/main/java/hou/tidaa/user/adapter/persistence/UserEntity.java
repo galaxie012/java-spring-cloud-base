@@ -1,4 +1,4 @@
-package hou.tidaa.user.adapter.db;
+package hou.tidaa.user.adapter.persistence;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
