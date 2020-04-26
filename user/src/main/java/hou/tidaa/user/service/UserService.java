@@ -22,19 +22,21 @@ public class UserService implements UserManagement, UserAuthentication {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(final UserRepository userRepository, final PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
 
     @Override
-    public Optional<IdentityDto> authentication(UsernamePasswordDto dto) {
-        return Optional.empty();
+    public Optional<IdentityDto> authentication(final UsernamePasswordDto dto) {
+        return userRepository.findByName(dto.username)
+                .filter(user -> passwordEncoder.matches(dto.password, user.getPassword()))
+                .map(user -> new IdentityDto(user.getId()));
     }
 
     @Override
-    public User register(UserRegisterDto dto) {
+    public User register(final UserRegisterDto dto) {
         userRepository.findByName(dto.name)
                 .ifPresent(user -> {
                     throw new RegistrationException("User name already exist! Please choose another user name.");

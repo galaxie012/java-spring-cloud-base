@@ -20,25 +20,25 @@ public class UserPersistenceRepository implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
+    public void save(final User user) {
         final UserEntity entity = MAPPER.map(user, UserEntity.class);
         userEntityPersistence.save(entity);
     }
 
     @Override
-    public Optional<User> findById(String uid) {
+    public Optional<User> findById(final String uid) {
         return userEntityPersistence.findById(uid)
-                .map(userEntity -> new User(userEntity.getId(), userEntity.getName(),userEntity.getPassword()));
+                .map(userEntity -> new User(userEntity.getId(), userEntity.getName(), userEntity.getPassword()));
     }
 
     @Override
-    public Optional<User> findByName(String name) {
+    public Optional<User> findByName(final String name) {
         return userEntityPersistence.findByName(name)
                 .map(userEntity -> new User(userEntity.getId(), userEntity.getName(), userEntity.getPassword()));
     }
 
     @Override
-    public void deleteByName(String name) {
+    public void deleteByName(final String name) {
         userEntityPersistence.deleteByName(name);
     }
 
