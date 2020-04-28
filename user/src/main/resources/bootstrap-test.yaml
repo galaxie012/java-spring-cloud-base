@@ -1,0 +1,8 @@
+# test - The environment where interface testing is performed.
+server:
+  port: 8080
+
+spring:
+  cloud:
+    config:
+      uri: http://config:8888
