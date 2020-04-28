@@ -20,7 +20,7 @@ public class UserConfig {
     }
 
     @Bean
-    public TokenSignService<String> TokenSigner(@Value("${jwt.private-key}") final String base64EncodedPrivateKey)
+    public TokenSignService<String> TokenSigner(@Value("${jwt.keys.rsa.private}") final String base64EncodedPrivateKey)
             throws InvalidKeySpecException, NoSuchAlgorithmException {
         return JWTSignService.fromPrivateKey(base64EncodedPrivateKey);
     }
