@@ -1,5 +1,6 @@
 package hou.tidaa.core.security.jwt;
 
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import hou.tidaa.core.security.token.IdentityDto;
 import hou.tidaa.core.security.token.Token;
@@ -23,6 +24,10 @@ public class JWTSignService implements TokenSignService<String> {
 
     @Override
     public Token<String> sign(IdentityDto auth) {
-        return null;
+        return Token.jwt(
+                JWT.create()
+                .withClaim("uid",auth.getUid())
+                .sign(algorithm)
+        );
     }
 }
