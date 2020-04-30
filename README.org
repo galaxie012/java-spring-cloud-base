@@ -119,5 +119,5 @@ make docker
 docker-compose up
 #+end_src
 
-** devops 设计文档
+** DevOps 设计文档
 查看项目根路径 [[DevOps.md]] 文件
