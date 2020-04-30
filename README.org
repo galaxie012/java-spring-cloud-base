@@ -69,11 +69,12 @@ curl -i -H "Content-Type: application/json" -X POST -d '{"name":"user","password
 curl -i -H "Content-Type: application/json" -X POST -d '{"name":"tidaa","password":"tidaa"}' http://localhost:8081/api/users/
 #+end_src
 
-** 登录
+*** 登录并领取 JWT
 #+begin_src
-curl -i -H "Content-Type: application/json" -X POST -d '{"name":"admin","password":"admin"}' http://localhost:8081/auth/login
-curl -i -H "Content-Type: application/json" -X POST -d '{"name":"admin","password":"admin"}' http://localhost:8766/auth/login
+curl -i -H "Content-Type: application/json" -X POST -d '{"username":"admin","password":"admin"}' http://localhost:8081/api/tokens
+curl -i -H "Content-Type: application/json" -X POST -d '{"username":"admin","password":""}' http://localhost:8081/api/tokens
 #+end_src
+
 
 ** 创建新闻
 #+begin_src

@@ -33,8 +33,7 @@ spring:
         - id: login-service   # 服务唯一ID标识
           uri: lb://user      # 注册中心的服务id
           predicates:
-            - Path=/auth/**
-
+            - Path=/api/tokens/**
         - id: user-service
           uri: lb://user
           predicates:
