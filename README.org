@@ -86,6 +86,7 @@ curl -i http://localhost:8082/api/news/4ba27e5a-5f35-4945-b307-e73d4ec17b01
 
 # 通过网关 + JWT Token 访问
 curl -i -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0aWRhYSJ9.EcYJZKHiCAshlRqJKIZtpNrkBIF4Nj0sc7-lKtHUna19AtCGsPrxw9wcppduwQ3D9D_y9uPiuFOQUbKRd7oqZ-t3pN6IhOey9xbKoYNWKnePWVTGz21dWjN3_7AcDkjV1shZ0NQylL2pLQbu0PfZTcVOFK0IaSAq2RhNY36ZCMc" http://localhost:8766/api/news/4ba27e5a-5f35-4945-b307-e73d4ec17b01
+curl -i -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0aWRhYSJ9.EcYJZKHiCAshlRqJKIZtpNrkBIF4Nj0sc7-lKtHUna19AtCGsPrxw9wcppduwQ3D9D_y9uPiuFOQUbKRd7oqZ-t3pN6IhOey9xbKoYNWKnePWVTGz21dWjN3_7AcDkjV1shZ0NQylL2pLQbu0PfZTcVOFK0IaSAq2RhNY36ZCMc" http://localhost:8766/api/users/5ba27e5a-5f35-4945-b307-e73d4ec17b01
 #+end_src
 
 * dev - 单元测试环境
