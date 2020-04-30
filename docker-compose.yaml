@@ -16,7 +16,7 @@ services:
     image: ${APP_IMAGES_SUIT}
     command: ["-h","http://config:8888/actuator/health","gateway.jar"]
     ports:
-      - 8080:8080
+      - 8766:8080
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
   user:
