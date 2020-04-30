@@ -88,5 +88,34 @@ curl -i http://localhost:8082/api/news/4ba27e5a-5f35-4945-b307-e73d4ec17b01
 curl -i -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJ0aWRhYSJ9.EcYJZKHiCAshlRqJKIZtpNrkBIF4Nj0sc7-lKtHUna19AtCGsPrxw9wcppduwQ3D9D_y9uPiuFOQUbKRd7oqZ-t3pN6IhOey9xbKoYNWKnePWVTGz21dWjN3_7AcDkjV1shZ0NQylL2pLQbu0PfZTcVOFK0IaSAq2RhNY36ZCMc" http://localhost:8766/api/news/4ba27e5a-5f35-4945-b307-e73d4ec17b01
 #+end_src
 
+* dev - 单元测试环境
+#+begin_src
+./gradlew clean test
+#+end_src
+
+* ci - 持续集成环境
+#+begin_src sh
+# 用 Checkstyle 扫描源码目录。通过预先配置的规则，判断代码
+# 是否满足规范。并生成检测报告。
+./gradlew checkstyleMain checkstyleTest
+
+# 通过查询 NVD (National Vulnerability Database) 数据
+# 来找到项目构建中，有安全漏洞的 Jar 依赖包，并生成检测报告。
+# 建议每七天至少检测一次。
+./gradlew dependencyCheckAnalyze
+
+# 检查依赖包，以及 Gradle 自身是否有更新。
+./gradlew dependencyUpdates
+#+end_src
+
+* test - 测试环境
+#+begin_src src
+# 打包
+make docker
+
+# 运行
+docker-compose up
+#+end_src
+
 ** devops 设计文档
 查看项目根路径 [[DevOps.md]] 文件
