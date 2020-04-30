@@ -23,7 +23,7 @@ services:
     image: ${APP_IMAGES_SUIT}
     command: ["-h","http://config:8888/actuator/health","user.jar"]
     healthcheck:
-      test: "curl -f http://user:8888/actuator/health || exit 1"
+      test: "curl -f http://user:8080/actuator/health || exit 1"
       interval: 30s
       timeout: 30s
       retries: 6
@@ -34,7 +34,7 @@ services:
     command: ["-h","http://config:8888/actuator/health","news.jar"]
     healthcheck:
       #test: ["CMD", "curl", "-f", "http://news:8082/actuator/health"]
-      test: "curl -f http://news:8082/actuator/health || exit 1"
+      test: "curl -f http://news:8080/actuator/health || exit 1"
       interval: 30s
       timeout: 30s
       retries: 6
