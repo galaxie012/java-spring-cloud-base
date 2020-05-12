@@ -34,6 +34,7 @@ spring:
           uri: lb://user      # 注册中心的服务id
           predicates:
             - Path=/api/tokens/**
+
         - id: user-service
           uri: lb://user
           predicates:

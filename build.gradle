@@ -21,7 +21,7 @@ subprojects {
     apply from: file("$rootDir/gradle/project.gradle")
 
     switch(name) {
-        case 'core':
+        case ['core','sdk']:
             template.java(name)
             break;
         case ['config', 'eureka', 'gateway']:

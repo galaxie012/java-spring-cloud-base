@@ -6,3 +6,5 @@ include 'config'
 include 'gateway'
 include 'user'
 include 'news'
+include 'sdk'
+

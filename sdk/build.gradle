@@ -1,0 +1,10 @@
+dependencies {
+    implementation libs.SpringWeb
+
+    compileOnly libs.Lombok
+    annotationProcessor libs.Lombok
+
+    testImplementation libs.JUnit5
+}
+
+ext.template.javaunittest()
